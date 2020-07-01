@@ -4,6 +4,10 @@ require("jest");
 const app = require("../basic-server");
 
 describe("server", function () {
+  afterAll(() => {
+    app.close()
+  });
+
   test("GET /messages 요청은 200 상태 코드를 응답해야 합니다", function (done) {
     return request(app)
       .get("/messages")
