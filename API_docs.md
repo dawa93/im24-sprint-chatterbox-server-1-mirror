@@ -7,5 +7,5 @@
 
 | Method | URL               | Body                                            | response                                             |
 | ------ | ----------------- | ----------------------------------------------- | ---------------------------------------------------- |
-| get    | /classes/messages | null                                            | `{results:[]}`                                       |
-| post   | /classes/messages | `{username:'codestates',message:'hello world'}` | `{id:1,username:'codestates',message:'hello world'}` |
+| get    | /messages | null                                            | `{results:[]}`                                       |
+| post   | /messages | `{username:'codestates',message:'hello world'}` | `{id:1,username:'codestates',message:'hello world'}` |
