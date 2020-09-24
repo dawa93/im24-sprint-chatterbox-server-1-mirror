@@ -12,11 +12,11 @@ exec("jest --json", (err, json, stderr) => {
 
   const options = {
     hostname: URCLASS_URL,
-    path: `/Prod/submit/`,
-    method: "POST",
+    path: `/production/submit/sprint`,
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json"
-    }
+      'Content-Type': 'application/json',
+    },
   };
 
   console.log(JSON.stringify(options));
