@@ -5,13 +5,13 @@ const app = require("../basic-server");
 
 describe("server", function () {
   afterAll(() => {
-    app.close()
+    app.close();
   });
 
   test("GET /messages 요청은 200 상태 코드를 응답해야 합니다", function (done) {
     return request(app)
       .get("/messages")
-      .then(res => {
+      .then((res) => {
         expect(res.status).toEqual(200);
         done();
       });
@@ -19,7 +19,7 @@ describe("server", function () {
   test("GET /messages 요청은 파싱 가능한 JSON 문자열을 돌려줘야 합니다", function (done) {
     return request(app)
       .get("/messages")
-      .then(res => {
+      .then((res) => {
         const isParsable = function (string) {
           try {
             JSON.parse(string);
@@ -35,7 +35,7 @@ describe("server", function () {
   test("GET /messages 요청의 응답은 객체의 형태여야 합니다", function (done) {
     return request(app)
       .get("/messages")
-      .then(res => {
+      .then((res) => {
         const parsedBody = JSON.parse(res.text);
         expect(typeof parsedBody).toEqual("object");
         done();
@@ -44,7 +44,7 @@ describe("server", function () {
   test("GET /messages 요청의 응답 객체는 `results`에 배열을 포함해야 합니다", function (done) {
     return request(app)
       .get("/messages")
-      .then(res => {
+      .then((res) => {
         const parsedBody = JSON.parse(res.text);
         expect(typeof parsedBody).toEqual("object");
         expect(Array.isArray(parsedBody.results)).toEqual(true);
@@ -56,9 +56,9 @@ describe("server", function () {
       .post("/messages")
       .send({
         username: "Jono",
-        text: "Do my bidding!"
+        text: "Do my bidding!",
       })
-      .then(res => {
+      .then((res) => {
         expect(res.status).toEqual(201);
         done();
       });
@@ -68,12 +68,12 @@ describe("server", function () {
       .post("/messages")
       .send({
         username: "Jono",
-        text: "Do my bidding!"
+        text: "Do my bidding!",
       })
       .then(() => {
         return request(app)
           .get("/messages")
-          .then(res => {
+          .then((res) => {
             const messages = JSON.parse(res.text).results;
             expect(messages[0].username).toEqual("Jono");
             expect(messages[0].text).toEqual("Do my bidding!");
@@ -84,7 +84,7 @@ describe("server", function () {
   test("존재하지 않는 endpoint를 요청할 때에, 404 상태 코드를 응답해야 합니다", function (done) {
     return request(app)
       .get("/codestates")
-      .then(res => {
+      .then((res) => {
         expect(res.status).toEqual(404);
         done();
       });

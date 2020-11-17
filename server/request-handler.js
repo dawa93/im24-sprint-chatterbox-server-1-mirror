@@ -7,37 +7,49 @@ reuqestHandler 함수는 이미 basic-server.js 파일에서 사용 했지만, �
 requestHandler 함수를 export 하여 basic-server.js 에서 사용 할 수 있게 하세요
 
 **************************************************************/
-let storage = { results: [] };
+
+const fs = require("fs");
+// const path = require("path");
+// const db = path.join(__dirname, "/data.js");
+
+// var messages = (path) => {
+//   return new Promise((resolve, reject) => {
+//     fs.readFile(path, "utf8", (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         // console.log(data);
+//         resolve(data);
+//       }
+//     });
+//   });
+// };
+
+// var readAllMsg = async () => {
+//   const msg = await messages(db);
+//   return JSON.parse(msg);
+// };
+
+// let storage = { results: [] };
 const requestHandler = function (reqeust, response) {
   const { method, url } = reqeust;
   // node server 의 requestHandler는 항상 reqeustuest, response를 인자로 받습니다.
-
   // 또한 http 요청은 항상 요청과 응답이 동반 되어야 합니다.
-  //
   // 이것들은 요청에 대한 정보를 담고 있습니다. 예를들면, 요청 url과 method 등을 담고 있습니다.
-  //
   // 기본적인 로그를 작성 하세요
-  //
   // 간단한 로그를 작성 하는 것은, 서버를 디버깅 하는데 매우 수월하게 해줍니다.
   // 아래는 모든 리퀘스트의 메소드와 url을 로깅 해줍니다.
   /* eslint no-console: 0 */
   console.log(
     "Serving reqeustuest type " + reqeust.method + " for url " + reqeust.url
   );
-
   // 기본 CORS 설정이 되어있는 코드 입니다. 아래에 있습니다.
   // CORS에 대해서는 조금더 알아보세요.
   const headers = defaultCorsHeaders;
   // 응답 헤더에 응답하는 컨텐츠의 자료 타입을 헤더에 기록 합니다.
   headers["Content-Type"] = "text/plain";
-
   // .writeHead() 메소드의 두번째 인자로는 응답 헤더와 키와 값을 객체 형태로 적어줍니다.
-
   // 노드 서버에 대한 모든 요청은 응답이 있어야 합니다. response.end 메소드는 요청에 대한 응답을 보내줍니다.
-
-  // 1. cors일때, http의 헤드 보내기
-  // 2. post 일때, 서버한테 메세지들을 보내주자
-  // 3. get 일때,
   if (method === "OPTIONS") {
     response.writeHead(200, headers);
     response.end();
@@ -46,24 +58,75 @@ const requestHandler = function (reqeust, response) {
   if (url === "/messages") {
     if (method === "GET") {
       response.writeHead(200, headers);
-      response.end(JSON.stringify(storage));
+      var allMessages;
+      fs.readFile("./data.json", "utf8", (err, data) => {
+        if (err) {
+          throw err;
+        } else {
+          console.log(data);
+          allMessages = data.results;
+          console.log(data.results);
+        }
+      });
+      console.log("**********" + JSON.stringify(allMessages));
+      response.end(JSON.stringify(allMessages));
     } else if (method === "POST") {
       response.writeHead(201, headers);
-
-      let data = ""; // <Buffer 12 23 54 63 77>
+      let body = [];
       reqeust
         .on("data", (chunk) => {
-          data += chunk;
+          body.push(chunk);
         })
         .on("end", () => {
-          storage.results.push(JSON.parse(data));
-          response.end(JSON.stringify(data));
+          body = Buffer.concat(body).toString();
+          console.log(body);
+          fs.writeFile("./data.json", JSON.stringify(body), "utf8", (err) => {
+            if (err) {
+              throw err;
+            } else {
+              console.log(
+                JSON.parse(body).username + " successful to send a msg"
+              );
+            }
+          });
+          response.end(body);
         });
+      //
     }
   } else {
     response.writeHead(404);
     response.end("");
   }
+  //
+  //
+  //
+  //
+  //
+
+  // if (method === "OPTIONS") {
+  //   response.writeHead(200, headers);
+  //   response.end();
+  // }
+  // if (url === "/messages") {
+  //   if (method === "GET") {
+  //     response.writeHead(200, headers);
+  //     response.end(JSON.stringify(storage));
+  //   } else if (method === "POST") {
+  //     response.writeHead(201, headers);
+  //     let data = "";
+  //     reqeust
+  //       .on("data", (chunk) => {
+  //         data += chunk;
+  //       })
+  //       .on("end", () => {
+  //         storage.results.push(JSON.parse(data));
+  //         response.end(JSON.stringify(data));
+  //       });
+  //   }
+  // } else {
+  //   response.writeHead(404);
+  //   response.end("");
+  // }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
